@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TOFF 0.1 (beta)</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="home" id="home">
+
+    <h1>TOFF</h1>
+
+    <p class="model">TOFF 0.1 (beta)</p>
+
+    <h2>How can I help you today?</h2>
+
+    <div class="inputBox">
+
+        <input
+        id="message"
+        type="text"
+        placeholder="Message TOFF..."
+        onkeydown="if(event.key==='Enter')sendMessage()">
+
+        <button onclick="sendMessage()">
+            ↑
+        </button>
+
+    </div>
+
+</div>
+
+<div id="chatPage">
+
+    <div class="topbar">
+
+        <div>
+
+            <h3>TOFF</h3>
+
+            <small>TOFF 0.1 (beta)</small>
+
+        </div>
+
+    </div>
+
+    <div id="chat"></div>
+
+    <div class="bottom">
+
+        <input
+        id="message2"
+        type="text"
+        placeholder="Message TOFF..."
+        onkeydown="if(event.key==='Enter')sendMessage2()">
+
+        <button onclick="sendMessage2()">↑</button>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
