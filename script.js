@@ -1,71 +1,56 @@
-const home = document.getElementById("home");
-const chatPage = document.getElementById("chatPage");
-const chat = document.getElementById("chat");
+export default {
+  async fetch(request, env) {
 
-function addMessage(sender, text, className) {
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Methods": "POST, OPTIONS"
+        }
+      });
+    }
 
-    chat.innerHTML += `
-        <div class="${className}">
-            <b>${sender}:</b><br>
-            ${text}
-        </div>
-    `;
+    const { message } = await request.json();
 
-    chat.scrollTop = chat.scrollHeight;
-}
+    const response = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${env.DEEPSEEK_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          {
+            role: "system",
+            content: "You are TOFF 0.1 (beta), a helpful AI assistant."
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
+    });
 
-function openChat(firstMessage){
+    if (!response.ok) {
+      const error = await response.text();
+      return new Response(error, { status: response.status });
+    }
 
-    home.style.display = "none";
-    chatPage.style.display = "block";
+    const data = await response.json();
 
-    addMessage("You", firstMessage, "user");
-
-    // Placeholder muna
-    setTimeout(() => {
-        addMessage(
-            "TOFF",
-            "Hello! I'm TOFF 0.1 (beta). TOFF integration coming soon.",
-            "ai"
-        );
-    },500);
-
-}
-
-function sendMessage(){
-
-    const input = document.getElementById("message");
-
-    const message = input.value.trim();
-
-    if(message=="") return;
-
-    input.value="";
-
-    openChat(message);
-
-}
-
-function sendMessage2(){
-
-    const input = document.getElementById("message2");
-
-    const message = input.value.trim();
-
-    if(message=="") return;
-
-    input.value="";
-
-    addMessage("You",message,"user");
-
-    setTimeout(()=>{
-
-        addMessage(
-            "TOFF",
-            "This is still a placeholder response.",
-            "ai"
-        );
-
-    },500);
-
-}
+    return new Response(
+      JSON.stringify({
+        reply: data.choices[0].message.content
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      }
+    );
+  }
+};
